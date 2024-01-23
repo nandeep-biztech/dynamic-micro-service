@@ -14,42 +14,45 @@ jobs:
           - gateway
           - user-service
 
-    jobs:
-      build:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-          - name: Set up Node.js
-            uses: actions/setup-node@v4
-            with:
-              node-version: '20'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-          - name: Install dependencies
-            run: |
-              npm install
-              npm install -g @nestjs/cli
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install -g @nestjs/cli
 
-          - name: Build service
-            run: npx nest build ${{ matrix.service }}
+      - name: Build service
+        run: npx nest build ${{ matrix.service }}
 
-      test:
-        needs: build
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v2
+  test:
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    strategy:
+      matrix:
+        service:
+          - gateway
+          - user-service
 
-          - name: Set up Node.js
-            uses: actions/setup-node@v4
-            with:
-              node-version: '20'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-          - name: Install dependencies
-            run: |
-              npm install
-              npm install -g @nestjs/cli
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-          - name: Test service
-            run: npx jest ${{ matrix.service }}
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install -g @nestjs/cli
+
+      - name: Test service
+        run: npx jest ${{ matrix.service }}
