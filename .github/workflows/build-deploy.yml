@@ -1,4 +1,4 @@
-name: Build Services
+name: Build and Test Services
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build_service:
+  build_and_test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -14,19 +14,42 @@ jobs:
           - gateway
           - user-service
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+          - name: Set up Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: '20'
 
-      - name: Install dependencies
-        run: |
-          npm install
-          npm install -g @nestjs/cli
+          - name: Install dependencies
+            run: |
+              npm install
+              npm install -g @nestjs/cli
 
-      - name: Build service
-        run: npx nest build ${{ matrix.service }}
+          - name: Build service
+            run: npx nest build ${{ matrix.service }}
+
+      test:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v2
+
+          - name: Set up Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: '20'
+
+          - name: Install dependencies
+            run: |
+              npm install
+              npm install -g @nestjs/cli
+
+          - name: Test service
+            run: npx jest ${{ matrix.service }}
