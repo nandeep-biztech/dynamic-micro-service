@@ -21,6 +21,7 @@ jobs:
         run: |
           npm install
           npm install -g @nestjs/cli
+          npm run build gateway
 
   build_gateway:
     runs-on: ubuntu-latest
