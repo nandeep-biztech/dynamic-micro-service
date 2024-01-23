@@ -35,7 +35,7 @@ jobs:
           node-version: '20'
 
       - name: Build gateway
-        run: npx nest build gateway
+        run: npm run build gateway
 
   build_user_service:
     runs-on: ubuntu-latest
@@ -50,4 +50,4 @@ jobs:
           node-version: '20'
 
       - name: Build user service
-        run: npx nest build user-service
+        run: npm run build user-service
